@@ -7,7 +7,7 @@ export default function ThankYouPage({ onBack }: { onBack: () => void }) {
   const name = urlParams.get('name') || 'Guest';
 
   const handleOpenMaps = () => {
-    window.open('https://maps.google.com/?q=Parvathy+Auditorium+Chandhranagar+Palakkad', '_blank');
+    window.open('https://www.google.com/maps/search/?api=1&query=Parvathy+Auditorium,+Chandranagar,+Palakkad', '_blank');
   };
 
   return (

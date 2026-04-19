@@ -22,7 +22,10 @@ const WEDDING_DATE = new Date('2026-05-24T16:00:00');
 
 export default function App() {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
-  const [rsvpStatus, setRsvpStatus] = useState<'yes' | 'no' | null>(null);
+  const [rsvpStatus, setRsvpStatus] = useState<'yes' | 'no' | null>(() => {
+    const saved = localStorage.getItem('wedding_rsvp_status');
+    return (saved === 'yes' || saved === 'no') ? saved : null;
+  });
   const [currentPath, setCurrentPath] = useState<string>(window.location.pathname);
   const [adminData, setAdminData] = useState<any[]>([]);
   const [hasOpened, setHasOpened] = useState(false);
@@ -30,14 +33,21 @@ export default function App() {
   const [hasVisitedOtherPage, setHasVisitedOtherPage] = useState(false);
   const [showScrollArrow, setShowScrollArrow] = useState(false);
 
-  const isExpired = new Date() > WEDDING_DATE;
-
   // Sync state with URL but allow manual state updates
   useEffect(() => {
     const handlePopState = () => setCurrentPath(window.location.pathname);
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  // Sync RSVP selection to local storage
+  useEffect(() => {
+    if (rsvpStatus) {
+      localStorage.setItem('wedding_rsvp_status', rsvpStatus);
+    }
+  }, [rsvpStatus]);
+
+  const isExpired = new Date() > WEDDING_DATE;
 
   // Auto-redirect after animation and message
   useEffect(() => {
@@ -70,12 +80,12 @@ export default function App() {
     }
   }, [hasOpened, currentPath]);
 
-  const handleRSVP = async (status: 'yes' | 'no') => {
+  const handleRSVP = (status: 'yes' | 'no') => {
     setRsvpStatus(status);
     if (status === 'yes') {
       navigate('/rsvp');
     } else if (status === 'no') {
-      await saveRSVP('Regret', 0, 'no');
+      saveRSVP('Regret', 0, 'no').catch(console.error);
       navigate('/regret');
     }
   };
@@ -383,27 +393,28 @@ export default function App() {
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-sage/20 via-olive/20 to-sage/20" />
             
             <div className="max-w-md mx-auto space-y-10">
-              <div className="space-y-4">
-                <h2 className="font-display text-2xl md:text-3xl text-gray-dark italic leading-tight">
-                  We can't wait to celebrate this new beginning with you. Let us know if you'll be joining?
-                </h2>
-              </div>
-
               {!rsvpStatus ? (
-                <div className="flex flex-col sm:flex-row justify-center gap-4">
-                  <button 
-                    onClick={() => handleRSVP('yes')} 
-                    className="px-10 py-5 bg-olive text-white rounded-full text-xs font-bold uppercase tracking-[3px] transition-all hover:shadow-2xl hover:scale-105 active:scale-95"
-                  >
-                    I'll be there
-                  </button>
-                  <button 
-                    onClick={() => handleRSVP('no')} 
-                    className="px-10 py-5 bg-white border-2 border-olive/20 text-olive rounded-full text-xs font-bold uppercase tracking-[3px] transition-all hover:bg-olive hover:text-white hover:border-olive"
-                  >
-                    Regretfully Decline
-                  </button>
-                </div>
+                <>
+                  <div className="space-y-4">
+                    <h2 className="font-display text-2xl md:text-3xl text-gray-dark italic leading-tight">
+                      We can't wait to celebrate this new beginning with you. Let us know if you'll be joining?
+                    </h2>
+                  </div>
+                  <div className="flex flex-col sm:flex-row justify-center gap-4">
+                    <button 
+                      onClick={() => handleRSVP('yes')} 
+                      className="px-10 py-5 bg-olive text-white rounded-full text-xs font-bold uppercase tracking-[3px] transition-all hover:shadow-2xl hover:scale-105 active:scale-95"
+                    >
+                      I'll be there
+                    </button>
+                    <button 
+                      onClick={() => handleRSVP('no')} 
+                      className="px-10 py-5 bg-white border-2 border-olive/20 text-olive rounded-full text-xs font-bold uppercase tracking-[3px] transition-all hover:bg-olive hover:text-white hover:border-olive"
+                    >
+                      Regretfully Decline
+                    </button>
+                  </div>
+                </>
               ) : (
                 <motion.p 
                   initial={{ opacity: 0, y: 10 }}
