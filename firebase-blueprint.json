@@ -1,0 +1,22 @@
+{
+  "entities": {
+    "RSVP": {
+      "title": "RSVP",
+      "description": "RSVP responses",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "guestCount": { "type": "number" },
+        "status": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "guestCount", "status", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/rsvps/{rsvpId}": {
+      "schema": "RSVP",
+      "description": "RSVP collection"
+    }
+  }
+}

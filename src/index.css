@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&family=Dancing+Script:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-gold: #B89C6F;
+  --color-cream: #F5F5F0;
+  --color-sage: #8A9A74;
+  --color-olive: #5C634D;
+  --color-gray-dark: #333333;
+  --color-gray-light: #7E7E7E;
+  --color-border: #D1D1CB;
+  --font-serif: "Cormorant Garamond", serif;
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Playfair Display", serif;
+  --font-cursive: "Dancing Script", cursive;
+}
